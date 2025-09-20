@@ -1,12 +1,15 @@
+// Environment variables are loaded via app.json and expo-constants
+import Constants from 'expo-constants';
+
 // Daily Analysis Configuration
 export const DAILY_ANALYSIS_CONFIG = {
   // OpenAI API Configuration
   OPENAI: {
-    MODEL: 'gpt-4',
+    MODEL: 'gpt-4o', // Updated to current model
     MAX_TOKENS: 1500,
     TEMPERATURE: 0.4,
     // API Key will be set dynamically
-    API_KEY: 'YOUR_OPENAI_API_KEY_HERE',
+    API_KEY: Constants.expoConfig?.extra?.openaiApiKey,
   },
 
   // Analysis Settings
@@ -97,12 +100,20 @@ export const DAILY_ANALYSIS_CONFIG = {
 // Environment-specific configurations
 export const getConfig = () => {
   const isDevelopment = __DEV__;
+  const isDemo = Constants.expoConfig?.extra?.demo === '1';
+  
+  console.log('🔧 Daily Analysis Config Debug:');
+  console.log('  - Constants.expoConfig?.extra:', Constants.expoConfig?.extra);
+  console.log('  - Demo value from config:', Constants.expoConfig?.extra?.demo);
+  console.log('  - Is demo mode (demo === "1"):', isDemo);
+  console.log('  - Mock mode will be:', isDemo);
+  console.log('  - API Key available:', !!Constants.expoConfig?.extra?.openaiApiKey);
   
   return {
     ...DAILY_ANALYSIS_CONFIG,
     ANALYSIS: {
       ...DAILY_ANALYSIS_CONFIG.ANALYSIS,
-      MOCK_MODE: isDevelopment, // Use mock mode in development
+      MOCK_MODE: isDemo, // Use mock mode when DEMO=1
     },
   };
 };

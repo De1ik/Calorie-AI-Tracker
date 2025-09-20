@@ -46,6 +46,21 @@ export interface HealthInsights {
   dietaryRestrictions?: string[];
 }
 
+export interface NutritionalAdvice {
+  generalAdvice: string;
+  specificSuggestions: {
+    vegetables?: string;
+    fruits?: string;
+    proteins?: string;
+    carbs?: string;
+    healthyFats?: string;
+    hydration?: string;
+  };
+  mealEnhancement: string[];
+  portionAdvice: string;
+  timingAdvice?: string;
+}
+
 export interface FoodAnalysisResponse {
   success: boolean;
   data?: {
@@ -53,6 +68,7 @@ export interface FoodAnalysisResponse {
     nutritionalInfo: NutritionalInfo;
     rating: FoodRating;
     healthInsights: HealthInsights;
+    nutritionalAdvice: NutritionalAdvice;
     confidence: number; // 0-100 percentage
     analysisTime: number; // in milliseconds
   };
@@ -74,5 +90,6 @@ export interface MockFoodData {
   nutritionalInfo: NutritionalInfo;
   rating: FoodRating;
   healthInsights: HealthInsights;
+  nutritionalAdvice: NutritionalAdvice;
   confidence: number;
 }

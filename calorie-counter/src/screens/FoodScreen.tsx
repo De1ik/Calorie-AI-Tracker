@@ -160,6 +160,7 @@ export default function FoodScreen() {
             imageUri: analyzedFood.imageUri,
             rating: result.data.rating,
             healthInsights: result.data.healthInsights?.benefits || [],
+            nutritionalAdvice: result.data.nutritionalAdvice,
           };
 
           setAnalyzedFoodData(summaryData);

@@ -131,14 +131,6 @@ export default function MainScreen({ onLogout }: MainScreenProps) {
       setDailyAnalysisResult(result);
       setShowDailyAnalysisModal(true);
       
-      // Fallback alert in case modal doesn't show
-      if (result.success && result.data) {
-        Alert.alert(
-          'Daily Analysis Complete!',
-          `Overall Score: ${result.data.healthInsights.overallScore}/10\n\n${result.data.personalizedAdvice}`,
-          [{ text: 'OK' }]
-        );
-      }
     } catch (error) {
       console.error('Error performing daily analysis:', error);
       Alert.alert('Analysis Error', 'Failed to analyze your daily progress. Please try again.');
@@ -216,19 +208,19 @@ export default function MainScreen({ onLogout }: MainScreenProps) {
           <View style={styles.macrosContainer}>
             <View style={styles.macroItem}>
               <Text style={[styles.macroValue, { color: '#4CAF50' }]}>
-                {todaysMeals.reduce((sum, meal) => sum + meal.protein, 0).toFixed(0)}g
+                {todaysMeals.reduce((sum, meal) => sum + meal.protein, 0).toFixed(1)}g
               </Text>
               <Text style={styles.macroLabel}>Protein</Text>
             </View>
             <View style={styles.macroItem}>
               <Text style={[styles.macroValue, { color: '#FF9800' }]}>
-                {todaysMeals.reduce((sum, meal) => sum + meal.carbs, 0).toFixed(0)}g
+                {todaysMeals.reduce((sum, meal) => sum + meal.carbs, 0).toFixed(1)}g
               </Text>
               <Text style={styles.macroLabel}>Carbs</Text>
             </View>
             <View style={styles.macroItem}>
               <Text style={[styles.macroValue, { color: '#FFFFFF' }]}>
-                {todaysMeals.reduce((sum, meal) => sum + meal.fat, 0).toFixed(0)}g
+                {todaysMeals.reduce((sum, meal) => sum + meal.fat, 0).toFixed(1)}g
               </Text>
               <Text style={styles.macroLabel}>Fat</Text>
             </View>
