@@ -11,6 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,6 +21,8 @@ interface WeightHeightScreenProps {
 }
 
 export default function WeightHeightScreen({ onNext, onBack }: WeightHeightScreenProps) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [weight, setWeight] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [fadeAnim] = useState(new Animated.Value(0));
@@ -68,7 +71,7 @@ export default function WeightHeightScreen({ onNext, onBack }: WeightHeightScree
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton} onPress={onBack}>
-            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+            <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
@@ -91,14 +94,14 @@ export default function WeightHeightScreen({ onNext, onBack }: WeightHeightScree
           {/* Weight Input */}
           <View style={styles.inputContainer}>
             <View style={styles.inputHeader}>
-              <Ionicons name="scale" size={24} color="#4CAF50" />
+              <Ionicons name="scale" size={24} color={colors.primary} />
               <Text style={styles.inputLabel}>Weight</Text>
             </View>
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
                 placeholder="70"
-                placeholderTextColor="#8E8E93"
+                placeholderTextColor={colors.textSecondary}
                 value={weight}
                 onChangeText={setWeight}
                 keyboardType="numeric"
@@ -112,14 +115,14 @@ export default function WeightHeightScreen({ onNext, onBack }: WeightHeightScree
           {/* Height Input */}
           <View style={styles.inputContainer}>
             <View style={styles.inputHeader}>
-              <Ionicons name="resize" size={24} color="#4CAF50" />
+              <Ionicons name="resize" size={24} color={colors.primary} />
               <Text style={styles.inputLabel}>Height</Text>
             </View>
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
                 placeholder="175"
-                placeholderTextColor="#8E8E93"
+                placeholderTextColor={colors.textSecondary}
                 value={height}
                 onChangeText={setHeight}
                 keyboardType="numeric"
@@ -177,7 +180,7 @@ export default function WeightHeightScreen({ onNext, onBack }: WeightHeightScree
             <Ionicons
               name="arrow-forward"
               size={20}
-              color={isNextEnabled ? '#FFFFFF' : '#8E8E93'}
+              color={isNextEnabled ? colors.text : colors.textSecondary}
             />
           </TouchableOpacity>
         </View>
@@ -187,10 +190,10 @@ export default function WeightHeightScreen({ onNext, onBack }: WeightHeightScree
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
   },
   content: {
     flex: 1,
@@ -206,28 +209,40 @@ const styles = StyleSheet.create({
     width: width * 0.1,
     height: width * 0.1,
     borderRadius: width * 0.05,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: width * 0.04,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   progressContainer: {
     flex: 1,
   },
   progressBar: {
     height: 4,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.border,
     borderRadius: 2,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     borderRadius: 2,
   },
   progressText: {
     fontSize: width * 0.03,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   titleSection: {
@@ -236,12 +251,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: width * 0.07,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: height * 0.01,
   },
   subtitle: {
     fontSize: width * 0.04,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     lineHeight: width * 0.06,
   },
   inputSection: {
@@ -249,9 +264,19 @@ const styles = StyleSheet.create({
     gap: height * 0.04,
   },
   inputContainer: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: width * 0.04,
     padding: width * 0.05,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   inputHeader: {
     flexDirection: 'row',
@@ -261,60 +286,70 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: width * 0.045,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
     marginLeft: width * 0.03,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
     borderRadius: width * 0.03,
     paddingHorizontal: width * 0.04,
     paddingVertical: 4,
     marginBottom: height * 0.01,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   input: {
     flex: 1,
     fontSize: width * 0.06,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.text,
     paddingVertical: height * 0.02,
   },
   inputUnit: {
     fontSize: width * 0.04,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontWeight: '500',
     marginLeft: width * 0.02,
   },
   inputHint: {
     fontSize: width * 0.035,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   bmiContainer: {
     marginTop: height * 0.03,
   },
   bmiCard: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: width * 0.04,
     padding: width * 0.05,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#4CAF50',
+    borderWidth: 2,
+    borderColor: colors.primary,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   bmiTitle: {
     fontSize: width * 0.04,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     marginBottom: height * 0.01,
   },
   bmiValue: {
     fontSize: width * 0.08,
     fontWeight: '700',
-    color: '#4CAF50',
+    color: colors.primary,
     marginBottom: height * 0.005,
   },
   bmiCategory: {
     fontSize: width * 0.035,
-    color: '#FFFFFF',
+    color: colors.text,
     fontWeight: '500',
   },
   buttonContainer: {
@@ -327,7 +362,7 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.03,
   },
   nextButton: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: width * 0.04,
     paddingVertical: height * 0.02,
     paddingHorizontal: width * 0.06,
@@ -335,19 +370,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#3A3A3A',
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   nextButtonEnabled: {
-    backgroundColor: '#4CAF50',
-    borderColor: '#4CAF50',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   nextButtonText: {
     fontSize: width * 0.04,
     fontWeight: '600',
-    color: '#8E8E93',
+    color: colors.textSecondary,
     marginRight: width * 0.02,
   },
   nextButtonTextEnabled: {
-    color: '#FFFFFF',
+    color: colors.text,
   },
 });

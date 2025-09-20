@@ -6,12 +6,15 @@ import { database } from '../database/database';
 import { User, MealEntry, WeightEntry, StepsEntry } from '../database/schema';
 import { dailyAnalysisService, DailyAnalysisResponse, DailyAnalysisRequest } from '../services/dailyAnalysis';
 import DailyAnalysisModal from '../components/DailyAnalysisModal';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface MainScreenProps {
   onLogout: () => void;
 }
 
 export default function MainScreen({ onLogout }: MainScreenProps) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [user, setUser] = useState<User | null>(null);
   const [showDailyAnalysisModal, setShowDailyAnalysisModal] = useState(false);
   const [dailyAnalysisResult, setDailyAnalysisResult] = useState<DailyAnalysisResponse | null>(null);
@@ -219,7 +222,7 @@ export default function MainScreen({ onLogout }: MainScreenProps) {
               <Text style={styles.macroLabel}>Carbs</Text>
             </View>
             <View style={styles.macroItem}>
-              <Text style={[styles.macroValue, { color: '#FFFFFF' }]}>
+              <Text style={[styles.macroValue, { color: colors.text }]}>
                 {todaysMeals.reduce((sum, meal) => sum + meal.fat, 0).toFixed(1)}g
               </Text>
               <Text style={styles.macroLabel}>Fat</Text>
@@ -311,10 +314,10 @@ export default function MainScreen({ onLogout }: MainScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -326,7 +329,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 18,
   },
   header: {
@@ -336,18 +339,28 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 5,
   },
   date: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   card: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -357,12 +370,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     marginLeft: 8,
   },
   cardSubtitle: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     marginBottom: 16,
   },
   caloriesSection: {
@@ -373,23 +386,25 @@ const styles = StyleSheet.create({
   },
   caloriesLabel: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: colors.text,
   },
   caloriesValue: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: colors.text,
     fontWeight: '600',
   },
   progressBar: {
     height: 4,
-    backgroundColor: '#3A3A3A',
+    backgroundColor: colors.border,
     borderRadius: 2,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   progressFill: {
     height: '100%',
     width: '0%',
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     borderRadius: 2,
   },
   macrosContainer: {
@@ -406,20 +421,30 @@ const styles = StyleSheet.create({
   },
   macroLabel: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   analysisButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   analysisButtonDisabled: {
     opacity: 0.7,
   },
   analysisButtonText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -428,29 +453,36 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 12,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#3A3A3A',
+    borderBottomColor: colors.border,
+    backgroundColor: colors.background,
+    marginHorizontal: -16,
+    marginVertical: 2,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   mealInfo: {
     flex: 1,
   },
   mealName: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 4,
   },
   mealTime: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   mealCalories: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: colors.text,
     fontWeight: '600',
   },
   noMealsText: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     textAlign: 'center',
     paddingVertical: 20,
   },
@@ -460,13 +492,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   summaryCard: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
     marginHorizontal: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   summaryIcon: {
     position: 'relative',
@@ -477,8 +519,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -8,
     right: -8,
-    backgroundColor: '#4CAF50',
-    color: '#FFFFFF',
+    backgroundColor: colors.primary,
+    color: colors.text,
     fontSize: 12,
     fontWeight: 'bold',
     width: 20,
@@ -486,27 +528,47 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     textAlign: 'center',
     lineHeight: 20,
+    borderWidth: 2,
+    borderColor: colors.background,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   summaryText: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: colors.text,
     fontWeight: '600',
     marginBottom: 4,
   },
   summaryLabel: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   logoutButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: colors.error,
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.error,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   logoutButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
   },
 });

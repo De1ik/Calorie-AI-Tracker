@@ -3,15 +3,17 @@ import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Swi
 import { Ionicons } from '@expo/vector-icons';
 import { database } from '../database/database';
 import { User } from '../database/schema';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface SettingsScreenProps {
   onLogout: () => void;
 }
 
 export default function SettingsScreen({ onLogout }: SettingsScreenProps) {
+  const { colors, themeMode, setThemeMode } = useTheme();
+  const styles = createStyles(colors);
   const [user, setUser] = useState<User | null>(null);
   const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(true);
   const [waterReminders, setWaterReminders] = useState(true);
 
   React.useEffect(() => {
@@ -74,14 +76,14 @@ export default function SettingsScreen({ onLogout }: SettingsScreenProps) {
     <TouchableOpacity style={styles.settingItem} onPress={onPress}>
       <View style={styles.settingLeft}>
         <View style={styles.settingIcon}>
-          <Ionicons name={icon as any} size={20} color="#4CAF50" />
+          <Ionicons name={icon as any} size={20} color={colors.primary} />
         </View>
         <View style={styles.settingText}>
           <Text style={styles.settingTitle}>{title}</Text>
           {subtitle && <Text style={styles.settingSubtitle}>{subtitle}</Text>}
         </View>
       </View>
-      {rightComponent || <Ionicons name="chevron-forward" size={20} color="#8E8E93" />}
+      {rightComponent || <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />}
     </TouchableOpacity>
   );
 
@@ -90,7 +92,7 @@ export default function SettingsScreen({ onLogout }: SettingsScreenProps) {
       <Text style={styles.sectionTitle}>Profile</Text>
       <View style={styles.profileCard}>
         <View style={styles.profileAvatar}>
-          <Ionicons name="person" size={24} color="#4CAF50" />
+          <Ionicons name="person" size={24} color={colors.text} />
         </View>
         <View style={styles.profileInfo}>
           <Text style={styles.profileName}>
@@ -131,10 +133,10 @@ export default function SettingsScreen({ onLogout }: SettingsScreenProps) {
           'Use dark theme',
           undefined,
           <Switch
-            value={darkMode}
-            onValueChange={setDarkMode}
-            trackColor={{ false: '#3A3A3A', true: '#4CAF50' }}
-            thumbColor={darkMode ? '#FFFFFF' : '#8E8E93'}
+            value={themeMode === 'dark'}
+            onValueChange={(value) => setThemeMode(value ? 'dark' : 'light')}
+            trackColor={{ false: colors.textSecondary, true: colors.primary }}
+            thumbColor={themeMode === 'dark' ? colors.text : colors.textSecondary}
           />
         )}
         
@@ -215,12 +217,12 @@ export default function SettingsScreen({ onLogout }: SettingsScreenProps) {
       <Text style={styles.sectionTitle}>Account</Text>
       <View style={styles.sectionContent}>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Ionicons name="log-out" size={20} color="#FF3B30" />
+          <Ionicons name="log-out" size={20} color={colors.error} />
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
-          <Ionicons name="trash" size={20} color="#FF3B30" />
+          <Ionicons name="trash" size={20} color={colors.error} />
           <Text style={styles.deleteButtonText}>Delete Account</Text>
         </TouchableOpacity>
       </View>
@@ -261,10 +263,10 @@ export default function SettingsScreen({ onLogout }: SettingsScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -276,7 +278,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 18,
   },
   header: {
@@ -286,12 +288,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   section: {
     marginBottom: 24,
@@ -299,29 +301,59 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 12,
   },
   sectionContent: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 16,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   profileCard: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 20,
     flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
     alignItems: 'center',
   },
   profileAvatar: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+    borderWidth: 2,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   profileInfo: {
     flex: 1,
@@ -329,17 +361,17 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 4,
   },
   profileDetails: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   profileGoal: {
     fontSize: 14,
-    color: '#4CAF50',
+    color: colors.primary,
     fontWeight: '500',
   },
   settingItem: {
@@ -349,7 +381,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#3A3A3A',
+    borderBottomColor: colors.border,
+    backgroundColor: colors.card,
   },
   settingLeft: {
     flexDirection: 'row',
@@ -364,18 +397,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   settingText: {
     flex: 1,
   },
   settingTitle: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 2,
   },
   settingSubtitle: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   logoutButton: {
     flexDirection: 'row',
@@ -383,11 +426,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#3A3A3A',
+    borderBottomColor: colors.border,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
+    marginBottom: 8,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   logoutButtonText: {
     fontSize: 16,
-    color: '#FF3B30',
+    color: colors.error,
     marginLeft: 12,
     fontWeight: '500',
   },
@@ -396,10 +452,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   deleteButtonText: {
     fontSize: 16,
-    color: '#FF3B30',
+    color: colors.error,
     marginLeft: 12,
     fontWeight: '500',
   },
@@ -409,6 +477,6 @@ const styles = StyleSheet.create({
   },
   versionText: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
 });

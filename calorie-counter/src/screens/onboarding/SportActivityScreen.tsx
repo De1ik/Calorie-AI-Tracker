@@ -12,6 +12,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -28,6 +29,8 @@ const sportFrequencyOptions = [
 ];
 
 export default function SportActivityScreen({ onNext, onBack }: SportActivityScreenProps) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [selectedFrequency, setSelectedFrequency] = useState<string>('');
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(50));
@@ -71,7 +74,7 @@ export default function SportActivityScreen({ onNext, onBack }: SportActivityScr
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton} onPress={onBack}>
-            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+            <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
@@ -125,7 +128,7 @@ export default function SportActivityScreen({ onNext, onBack }: SportActivityScr
                     <Ionicons
                       name={option.icon as any}
                       size={width * 0.08}
-                      color={selectedFrequency === option.id ? '#FFFFFF' : '#4CAF50'}
+                      color={selectedFrequency === option.id ? colors.text : colors.primary}
                     />
                   </View>
                   <View style={styles.optionText}>
@@ -151,10 +154,10 @@ export default function SportActivityScreen({ onNext, onBack }: SportActivityScr
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
   },
   content: {
     flex: 1,
@@ -170,28 +173,40 @@ const styles = StyleSheet.create({
     width: width * 0.1,
     height: width * 0.1,
     borderRadius: width * 0.05,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: width * 0.04,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   progressContainer: {
     flex: 1,
   },
   progressBar: {
     height: 4,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.border,
     borderRadius: 2,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     borderRadius: 2,
   },
   progressText: {
     fontSize: width * 0.03,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   titleSection: {
@@ -200,12 +215,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: width * 0.07,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: height * 0.01,
   },
   subtitle: {
     fontSize: width * 0.04,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     lineHeight: width * 0.06,
   },
   optionsContainer: {
@@ -218,15 +233,23 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.02,
   },
   option: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: width * 0.05,
     padding: width * 0.05,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   optionSelected: {
-    borderColor: '#4CAF50',
-    backgroundColor: '#2C2F3A',
+    borderColor: colors.primary,
+    backgroundColor: colors.card,
   },
   optionContent: {
     flexDirection: 'row',
@@ -240,9 +263,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: width * 0.05,
+    borderWidth: 2,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   optionIconContainerSelected: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
   },
   optionText: {
     flex: 1,
@@ -250,15 +283,15 @@ const styles = StyleSheet.create({
   optionTitle: {
     fontSize: width * 0.045,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: height * 0.005,
   },
   optionTitleSelected: {
-    color: '#4CAF50',
+    color: colors.primary,
   },
   optionDescription: {
     fontSize: width * 0.035,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     lineHeight: width * 0.05,
   },
 });

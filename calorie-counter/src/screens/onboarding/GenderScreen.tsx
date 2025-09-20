@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated, TouchableWithoutFeedback, Keyboard, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { User } from '../../database/schema';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,6 +18,8 @@ const genders = [
 ];
 
 export default function GenderScreen({ onNext, onBack }: GenderScreenProps) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [selectedGender, setSelectedGender] = useState<User['gender'] | null>(null);
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(50));
@@ -109,7 +112,7 @@ export default function GenderScreen({ onNext, onBack }: GenderScreenProps) {
                     <Ionicons
                       name={gender.icon as any}
                       size={width * 0.08}
-                      color={selectedGender === gender.key ? '#FFFFFF' : '#4CAF50'}
+                      color={selectedGender === gender.key ? colors.text : colors.primary}
                     />
                   </View>
                   <Text style={[
@@ -128,10 +131,10 @@ export default function GenderScreen({ onNext, onBack }: GenderScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
   },
   content: {
     flex: 1,
@@ -147,28 +150,40 @@ const styles = StyleSheet.create({
     width: width * 0.1,
     height: width * 0.1,
     borderRadius: width * 0.05,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: width * 0.04,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   progressContainer: {
     flex: 1,
   },
   progressBar: {
     height: 4,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.border,
     borderRadius: 2,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     borderRadius: 2,
   },
   progressText: {
     fontSize: width * 0.03,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   titleSection: {
@@ -178,12 +193,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: width * 0.07,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: height * 0.01,
   },
   subtitle: {
     fontSize: width * 0.04,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     lineHeight: width * 0.06,
   },
   optionsContainer: {
@@ -196,7 +211,7 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.02,
   },
   option: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: width * 0.05,
     padding: height * 0.025,
     alignItems: 'center',
@@ -204,10 +219,18 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     minHeight: height * 0.1,
     justifyContent: 'center',
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   optionSelected: {
-    borderColor: '#4CAF50',
-    backgroundColor: '#2C2F3A',
+    borderColor: colors.primary,
+    backgroundColor: colors.card,
   },
   optionIconContainer: {
     width: width * 0.15,
@@ -217,16 +240,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: height * 0.015,
+    borderWidth: 2,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   optionIconContainerSelected: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
   },
   optionTitle: {
     fontSize: width * 0.045,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
   },
   optionTitleSelected: {
-    color: '#4CAF50',
+    color: colors.primary,
   },
 });

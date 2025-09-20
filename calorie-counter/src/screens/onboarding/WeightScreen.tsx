@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface WeightScreenProps {
   onNext: (weight: number) => void;
@@ -7,6 +8,8 @@ interface WeightScreenProps {
 }
 
 export default function WeightScreen({ onNext, onBack }: WeightScreenProps) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [weight, setWeight] = useState('');
 
   const handleNext = () => {
@@ -74,10 +77,10 @@ export default function WeightScreen({ onNext, onBack }: WeightScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
   },
   content: {
     flex: 1,
@@ -136,12 +139,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: '#e9ecef',
   },
   quickSelectButtonActive: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     borderColor: '#007AFF',
   },
   quickSelectButtonText: {
@@ -174,11 +177,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 15,
     borderRadius: 8,
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     alignItems: 'center',
   },
   nextButtonDisabled: {
-    backgroundColor: '#e9ecef',
+    backgroundColor: colors.border,
   },
   nextButtonText: {
     fontSize: 16,

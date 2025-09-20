@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView, ScrollView, TextInput, TouchableO
 import { Ionicons } from '@expo/vector-icons';
 import { chatService, ChatMessage } from '../services/chat';
 import { ENV, isOpenAIMode } from '../config/environment';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface Message {
   id: string;
@@ -21,6 +22,8 @@ const sampleMessages: Message[] = [
 ];
 
 export default function ChatScreen() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [messages, setMessages] = useState<Message[]>(sampleMessages);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -166,7 +169,7 @@ export default function ChatScreen() {
         <View style={styles.header}>
           <View style={styles.headerContent}>
             <View style={styles.aiAvatar}>
-              <Ionicons name="bulb" size={20} color="#4CAF50" />
+              <Ionicons name="bulb" size={20} color={colors.primary} />
             </View>
             <View style={styles.headerText}>
               <Text style={styles.headerTitle}>AI Nutrition Assistant</Text>
@@ -193,7 +196,7 @@ export default function ChatScreen() {
                 );
               }}
             >
-              <Ionicons name="settings" size={20} color="#4CAF50" />
+              <Ionicons name="settings" size={20} color={colors.primary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -261,20 +264,28 @@ export default function ChatScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
   },
   keyboardAvoidingView: {
     flex: 1,
   },
   header: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#3A3A3A',
+    borderBottomColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   headerContent: {
     flexDirection: 'row',
@@ -291,19 +302,29 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    borderWidth: 2,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   headerTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: '#4CAF50',
+    color: colors.primary,
   },
   messagesList: {
     flex: 1,
@@ -326,22 +347,42 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   userBubble: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     borderBottomRightRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   aiBubble: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderBottomLeftRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   messageText: {
     fontSize: 16,
     lineHeight: 22,
   },
   userMessageText: {
-    color: '#FFFFFF',
+    color: colors.text,
   },
   aiMessageText: {
-    color: '#FFFFFF',
+    color: colors.text,
   },
   messageTime: {
     fontSize: 12,
@@ -351,21 +392,31 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.7)',
   },
   aiMessageTime: {
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   typingContainer: {
     paddingHorizontal: 20,
     marginBottom: 8,
   },
   typingBubble: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     padding: 12,
     borderRadius: 16,
     borderBottomLeftRadius: 4,
     alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   typingText: {
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontSize: 14,
     fontStyle: 'italic',
   },
@@ -376,18 +427,28 @@ const styles = StyleSheet.create({
   quickQuestionsTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 12,
   },
   quickQuestionButton: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
     marginRight: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   quickQuestionText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 14,
   },
   inputContainer: {
@@ -395,33 +456,53 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderTopWidth: 1,
-    borderTopColor: '#3A3A3A',
+    borderTopColor: colors.border,
     minHeight: 80,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   textInput: {
     flex: 1,
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     maxHeight: 100,
     minHeight: 44,
     marginRight: 12,
     textAlignVertical: 'top',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   sendButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     width: 44,
     height: 44,
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sendButtonDisabled: {
-    backgroundColor: '#3A3A3A',
+    backgroundColor: colors.textSecondary,
+    shadowOpacity: 0,
+    elevation: 0,
   },
 });

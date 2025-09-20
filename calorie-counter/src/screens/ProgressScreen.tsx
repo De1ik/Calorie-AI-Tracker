@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Dimensions, Modal, TextInput, Alert, Image, FlatList, ActivityIndicator, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../contexts/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
 import { LineChart } from 'react-native-chart-kit';
 import { database } from '../database/database';
@@ -22,6 +23,8 @@ interface ProgressData {
 }
 
 export default function ProgressScreen() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('week');
   const [selectedDataType, setSelectedDataType] = useState<DataType>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('graph');
@@ -590,16 +593,40 @@ export default function ProgressScreen() {
             data: weightData.slice(-7),
             color: (opacity = 1) => `rgba(76, 175, 80, ${opacity})`, // Green for weight
             strokeWidth: 2,
+            withDots: true,
+            withScrollableDotFill: '#4CAF50',
+            withScrollableDotStroke: '#4CAF50',
+            withInnerLines: false,
+            withOuterLines: false,
+            withVerticalLines: false,
+            withHorizontalLines: false,
+            withShadow: false,
           },
           {
             data: caloriesData.slice(-7),
             color: (opacity = 1) => `rgba(255, 152, 0, ${opacity})`, // Orange for calories
             strokeWidth: 2,
+            withDots: true,
+            withScrollableDotFill: '#FF9800',
+            withScrollableDotStroke: '#FF9800',
+            withInnerLines: false,
+            withOuterLines: false,
+            withVerticalLines: false,
+            withHorizontalLines: false,
+            withShadow: false,
           },
           {
             data: stepsData.slice(-7),
             color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`, // Blue for steps
             strokeWidth: 2,
+            withDots: true,
+            withScrollableDotFill: '#2196F3',
+            withScrollableDotStroke: '#2196F3',
+            withInnerLines: false,
+            withOuterLines: false,
+            withVerticalLines: false,
+            withHorizontalLines: false,
+            withShadow: false,
           },
         ],
       };
@@ -630,7 +657,7 @@ export default function ProgressScreen() {
     }
 
     const chartConfig = {
-      backgroundColor: '#2C2F3A',
+      backgroundColor: colors.card,
       backgroundGradientFrom: '#2C2F3A',
       backgroundGradientTo: '#2C2F3A',
       decimalPlaces: 0,
@@ -639,12 +666,15 @@ export default function ProgressScreen() {
       style: {
         borderRadius: 16,
       },
-      propsForDots: {
-        r: '6',
-        strokeWidth: '2',
-        stroke: selectedDataType === 'calories' ? '#FF9800' : selectedDataType === 'steps' ? '#2196F3' : '#4CAF50',
-        fill: selectedDataType === 'calories' ? '#FF9800' : selectedDataType === 'steps' ? '#2196F3' : '#4CAF50',
-      },
+      // Only apply global dot props when not showing all data types
+      ...(selectedDataType !== 'all' && {
+        propsForDots: {
+          r: '6',
+          strokeWidth: '2',
+          stroke: selectedDataType === 'calories' ? '#FF9800' : selectedDataType === 'steps' ? '#2196F3' : '#4CAF50',
+          fill: selectedDataType === 'calories' ? '#FF9800' : selectedDataType === 'steps' ? '#2196F3' : '#4CAF50',
+        },
+      }),
       propsForBackgroundLines: {
         strokeDasharray: '5,5',
         stroke: 'rgba(255, 255, 255, 0.2)',
@@ -662,7 +692,7 @@ export default function ProgressScreen() {
         {selectedDataType === 'all' && (
           <View style={styles.legendContainer}>
             <View style={styles.legendItem}>
-              <View style={[styles.legendColor, { backgroundColor: '#4CAF50' }]} />
+              <View style={[styles.legendColor, { backgroundColor: colors.primary }]} />
               <Text style={styles.legendText}>Weight</Text>
             </View>
             <View style={styles.legendItem}>
@@ -730,7 +760,7 @@ export default function ProgressScreen() {
               activeOpacity={0.8}
             >
               <View style={styles.addRecordIconContainer}>
-                <Ionicons name="scale" size={24} color="#4CAF50" />
+                <Ionicons name="scale" size={24} color={colors.primary} />
               </View>
               <Text style={styles.addRecordButtonText}>Weight</Text>
               <Text style={styles.addRecordButtonSubtext}>Track progress</Text>
@@ -745,7 +775,7 @@ export default function ProgressScreen() {
               activeOpacity={0.8}
             >
               <View style={styles.addRecordIconContainer}>
-                <Ionicons name="walk" size={24} color="#2196F3" />
+                <Ionicons name="walk" size={24} color={colors.secondary} />
               </View>
               <Text style={styles.addRecordButtonText}>Steps</Text>
               <Text style={styles.addRecordButtonSubtext}>Daily activity</Text>
@@ -890,7 +920,7 @@ export default function ProgressScreen() {
                 <Ionicons 
                   name={userPreferences?.hidePhotos ? "eye-off" : "eye"} 
                   size={18} 
-                  color="#4CAF50" 
+                  color={colors.primary} 
                 />
                 <Text style={styles.hidePhotosText}>
                   {userPreferences?.hidePhotos ? 'Show Photos' : 'Hide Photos'}
@@ -953,12 +983,12 @@ export default function ProgressScreen() {
                 
                 <View style={styles.photoButtonsContainer}>
                   <TouchableOpacity style={styles.photoButton} onPress={takeWeightPhoto}>
-                    <Ionicons name="camera" size={20} color="#4CAF50" />
+                    <Ionicons name="camera" size={20} color={colors.primary} />
                     <Text style={styles.photoButtonText}>Take Photo</Text>
                   </TouchableOpacity>
                   
                   <TouchableOpacity style={styles.photoButton} onPress={pickWeightPhoto}>
-                    <Ionicons name="images" size={20} color="#4CAF50" />
+                    <Ionicons name="images" size={20} color={colors.primary} />
                     <Text style={styles.photoButtonText}>From Gallery</Text>
                   </TouchableOpacity>
                 </View>
@@ -1065,12 +1095,12 @@ export default function ProgressScreen() {
                   ) : (
                     <View style={styles.editPhotoButtons}>
                       <TouchableOpacity style={styles.editPhotoButton} onPress={takeWeightPhoto}>
-                        <Ionicons name="camera" size={20} color="#4CAF50" />
+                        <Ionicons name="camera" size={20} color={colors.primary} />
                         <Text style={styles.editPhotoButtonText}>Take Photo</Text>
                       </TouchableOpacity>
                       
                       <TouchableOpacity style={styles.editPhotoButton} onPress={pickWeightPhoto}>
-                        <Ionicons name="images" size={20} color="#4CAF50" />
+                        <Ionicons name="images" size={20} color={colors.primary} />
                         <Text style={styles.editPhotoButtonText}>From Gallery</Text>
                       </TouchableOpacity>
                     </View>
@@ -1184,10 +1214,10 @@ export default function ProgressScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -1203,17 +1233,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 8,
   },
   addRecordSection: {
@@ -1224,7 +1254,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     marginTop: 4,
   },
   addRecordButtons: {
@@ -1233,18 +1263,26 @@ const styles = StyleSheet.create({
   },
   addRecordButton: {
     flex: 1,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 20,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'transparent',
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   weightButton: {
-    borderColor: '#4CAF50',
+    borderColor: colors.primary,
   },
   stepsButton: {
-    borderColor: '#2196F3',
+    borderColor: colors.secondary,
   },
   addRecordIconContainer: {
     width: 48,
@@ -1256,13 +1294,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   addRecordButtonText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
   },
   addRecordButtonSubtext: {
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontSize: 12,
     fontWeight: '500',
   },
@@ -1277,10 +1315,20 @@ const styles = StyleSheet.create({
   },
   viewToggle: {
     flexDirection: 'row',
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 4,
     marginTop: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   viewToggleButton: {
     flex: 1,
@@ -1292,16 +1340,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   viewToggleButtonActive: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
   },
   viewToggleButtonText: {
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: '500',
     marginLeft: 6,
   },
   viewToggleButtonTextActive: {
-    color: '#FFFFFF',
+    color: colors.text,
   },
   listViewContainer: {
     flex: 1,
@@ -1320,12 +1368,12 @@ const styles = StyleSheet.create({
   listViewTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 4,
   },
   listViewSubtitle: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   listContentContainer: {
@@ -1349,19 +1397,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     marginRight: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   periodButtonActive: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
   },
   periodButtonText: {
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: '500',
   },
   periodButtonTextActive: {
-    color: '#FFFFFF',
+    color: colors.text,
   },
   dataTypeContainer: {
     marginBottom: 20,
@@ -1372,20 +1430,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     marginRight: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   dataTypeButtonActive: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
   },
   dataTypeButtonText: {
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: '500',
     marginLeft: 6,
   },
   dataTypeButtonTextActive: {
-    color: '#FFFFFF',
+    color: colors.text,
   },
   cardsContainer: {
     flexDirection: 'row',
@@ -1394,10 +1462,20 @@ const styles = StyleSheet.create({
   },
   progressCard: {
     flex: 1,
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -1406,13 +1484,13 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     marginLeft: 8,
   },
   cardValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 4,
   },
   cardChange: {
@@ -1420,15 +1498,25 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   chartContainer: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   chartTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -1450,7 +1538,7 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: 12,
-    color: '#FFFFFF',
+    color: colors.text,
     fontWeight: '500',
   },
   emptyChart: {
@@ -1459,7 +1547,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyChartText: {
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontSize: 16,
     marginTop: 12,
   },
@@ -1469,13 +1557,13 @@ const styles = StyleSheet.create({
   },
   chartBarFill: {
     width: 20,
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     borderRadius: 10,
     marginBottom: 8,
   },
   chartLabel: {
     fontSize: 10,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   recentDataContainer: {
@@ -1492,15 +1580,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   hidePhotosText: {
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontSize: 14,
     marginLeft: 4,
   },
   dataItem: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   dataDate: {
     marginBottom: 8,
@@ -1508,12 +1606,12 @@ const styles = StyleSheet.create({
   dataDateText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 4,
   },
   dataNotes: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontStyle: 'italic',
   },
   dataContent: {
@@ -1527,12 +1625,12 @@ const styles = StyleSheet.create({
   dataValueNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#4CAF50',
+    color: colors.primary,
     marginBottom: 2,
   },
   dataValueLabel: {
     fontSize: 12,
-    color: '#8E8E93',
+    color: colors.textSecondary,
   },
   dataImageContainer: {
     marginLeft: 12,
@@ -1550,7 +1648,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   showMoreText: {
-    color: '#4CAF50',
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '500',
     marginRight: 4,
@@ -1562,11 +1660,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pointInfoModal: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 20,
     width: '90%',
     maxWidth: 350,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   pointInfoHeader: {
     flexDirection: 'row',
@@ -1577,7 +1685,7 @@ const styles = StyleSheet.create({
   pointInfoTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
   },
   pointInfoContent: {
     gap: 15,
@@ -1589,48 +1697,62 @@ const styles = StyleSheet.create({
   },
   pointInfoLabel: {
     fontSize: 14,
-    color: '#8E8E93',
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   pointInfoValue: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: colors.text,
     fontWeight: '600',
     textAlign: 'right',
     flex: 1,
     marginLeft: 10,
   },
   modalContent: {
-    backgroundColor: '#2C2F3A',
+    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 24,
     width: '90%',
     maxWidth: 400,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.text,
     textAlign: 'center',
     marginBottom: 20,
   },
   weightInput: {
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 12,
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   notesInput: {
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 12,
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     marginBottom: 16,
     minHeight: 80,
     textAlignVertical: 'top',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   photoButtonsContainer: {
     flexDirection: 'row',
@@ -1638,15 +1760,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   photoButton: {
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
     flex: 1,
     marginHorizontal: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   photoButtonText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 12,
     marginTop: 4,
   },
@@ -1661,30 +1785,42 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cancelModalButton: {
-    backgroundColor: '#3A3A3A',
+    backgroundColor: colors.textSecondary,
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
     flex: 1,
     marginRight: 8,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   cancelModalButtonText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '500',
   },
   saveModalButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.primary,
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
     flex: 1,
     marginLeft: 8,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    shadowColor: colors.text,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   saveModalButtonText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '500',
   },
@@ -1714,21 +1850,21 @@ const styles = StyleSheet.create({
   editFieldLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.text,
     marginBottom: 8,
   },
   editInput: {
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 12,
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
   },
   editNotesInput: {
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 12,
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     minHeight: 80,
     textAlignVertical: 'top',
@@ -1761,14 +1897,14 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   editPhotoButton: {
-    backgroundColor: '#1A1D29',
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
     flex: 1,
   },
   editPhotoButtonText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 12,
     marginTop: 4,
   },
@@ -1786,7 +1922,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   deleteRecordButtonText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '500',
   },

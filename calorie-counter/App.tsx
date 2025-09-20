@@ -4,6 +4,7 @@ import { database } from './src/database/database';
 import { databaseUtils } from './src/utils/databaseUtils';
 import OnboardingFlow from './src/screens/onboarding/OnboardingFlow';
 import AppNavigator from './src/navigation/AppNavigator';
+import { ThemeProvider } from './src/contexts/ThemeContext';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -118,13 +119,15 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      {hasUser ? (
-        <AppNavigator onLogout={handleLogout} />
-      ) : (
-        <OnboardingFlow onComplete={handleOnboardingComplete} />
-      )}
-    </View>
+    <ThemeProvider>
+      <View style={styles.container}>
+        {hasUser ? (
+          <AppNavigator onLogout={handleLogout} />
+        ) : (
+          <OnboardingFlow onComplete={handleOnboardingComplete} />
+        )}
+      </View>
+    </ThemeProvider>
   );
 }
 
