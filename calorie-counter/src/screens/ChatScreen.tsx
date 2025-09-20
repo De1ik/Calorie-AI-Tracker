@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TextInput, TouchableOpacity, FlatList, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { chatService, ChatMessage } from '../services/chat';
+import { ENV, isOpenAIMode } from '../config/environment';
 
 interface Message {
   id: string;
@@ -22,8 +24,54 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>(sampleMessages);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const flatListRef = React.useRef<FlatList>(null);
 
-  const sendMessage = () => {
+  // Load chat history on component mount
+  useEffect(() => {
+    loadChatHistory();
+  }, []);
+
+  // Function to scroll to bottom
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  };
+
+  // Handle keyboard events
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+      scrollToBottom();
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const loadChatHistory = async () => {
+    try {
+      const history = await chatService.loadChatHistory();
+      if (history.length > 0) {
+        setMessages(history);
+      }
+    } catch (error) {
+      console.error('Error loading chat history:', error);
+    }
+  };
+
+  const sendMessage = async () => {
     if (inputText.trim() === '') return;
 
     const userMessage: Message = {
@@ -34,49 +82,47 @@ export default function ChatScreen() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputText.trim();
     setInputText('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Generate AI response using the chat service
+      const aiResponseText = await chatService.generateResponse(currentInput);
+      
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: generateAIResponse(inputText.trim()),
+        text: aiResponseText,
         isUser: false,
         timestamp: new Date(),
       };
+      
       setMessages(prev => [...prev, aiResponse]);
+      
+      // Save chat history
+      const updatedMessages = [...messages, userMessage, aiResponse];
+      await chatService.saveChatHistory(updatedMessages);
+      
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+      
+      // Fallback response
+      const fallbackResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I'm sorry, I'm having trouble processing your request right now. Please try again later.",
+        isUser: false,
+        timestamp: new Date(),
+      };
+      
+      setMessages(prev => [...prev, fallbackResponse]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
-  const generateAIResponse = (userInput: string): string => {
-    const lowerInput = userInput.toLowerCase();
-    
-    if (lowerInput.includes('calorie') || lowerInput.includes('calories')) {
-      return "Based on your current weight and activity level, I recommend aiming for 1,200-1,500 calories per day for weight loss. Focus on nutrient-dense foods like lean proteins, vegetables, and whole grains. Would you like me to create a sample meal plan for you?";
-    }
-    
-    if (lowerInput.includes('protein') || lowerInput.includes('protein')) {
-      return "For optimal health and muscle maintenance, aim for 0.8-1.2g of protein per kg of body weight. That's about 56-84g of protein daily for your current weight. Great sources include chicken breast, fish, eggs, Greek yogurt, and legumes.";
-    }
-    
-    if (lowerInput.includes('meal') || lowerInput.includes('food')) {
-      return "Here's a balanced meal suggestion: Grilled chicken breast (150g) with quinoa (1/2 cup) and steamed broccoli. This provides about 350 calories, 35g protein, 30g carbs, and 8g fat. Would you like more meal ideas?";
-    }
-    
-    if (lowerInput.includes('weight') || lowerInput.includes('lose')) {
-      return "To lose weight safely, aim for a 500-calorie deficit per day, which should result in about 1 pound of weight loss per week. Combine this with regular exercise and focus on whole, unprocessed foods. Remember, consistency is key!";
-    }
-    
-    if (lowerInput.includes('exercise') || lowerInput.includes('workout')) {
-      return "For your fitness goals, I recommend a combination of cardio (30-45 minutes, 3-4 times per week) and strength training (2-3 times per week). Start with activities you enjoy like walking, cycling, or bodyweight exercises.";
-    }
-    
-    return "That's a great question! I'd be happy to help you with that. Could you provide a bit more detail about what specific aspect of nutrition or fitness you'd like to discuss? I can help with meal planning, calorie tracking, exercise recommendations, and more.";
-  };
 
   const quickQuestions = [
+    "Can I eat a donut today?",
     "What should I eat today?",
     "How many calories do I need?",
     "Best protein sources?",
@@ -111,75 +157,106 @@ export default function ChatScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <View style={styles.aiAvatar}>
-            <Ionicons name="bulb" size={20} color="#4CAF50" />
-          </View>
-          <View>
-            <Text style={styles.headerTitle}>AI Nutrition Assistant</Text>
-            <Text style={styles.headerSubtitle}>Online • Ready to help</Text>
+      <KeyboardAvoidingView 
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <View style={styles.aiAvatar}>
+              <Ionicons name="bulb" size={20} color="#4CAF50" />
+            </View>
+            <View style={styles.headerText}>
+              <Text style={styles.headerTitle}>AI Nutrition Assistant</Text>
+              <Text style={styles.headerSubtitle}>
+                {isOpenAIMode() ? 'OpenAI Mode' : 'Predefined Mode'} • Ready to help
+              </Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.debugButton} 
+              onPress={() => {
+                Alert.alert(
+                  'Chat Configuration',
+                  `MODE: ${ENV.MODE}\nOpenAI Mode: ${isOpenAIMode()}\nAPI Key: ${ENV.OPENAI_API_KEY ? 'Available' : 'Missing'}\n\nTap "Force OpenAI" to enable ChatGPT mode.`,
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    { 
+                      text: 'Force OpenAI', 
+                      onPress: () => {
+                        chatService.forceOpenAIMode();
+                        Alert.alert('Success', 'OpenAI mode enabled! Try asking a question now.');
+                      }
+                    }
+                  ]
+                );
+              }}
+            >
+              <Ionicons name="settings" size={20} color="#4CAF50" />
+            </TouchableOpacity>
           </View>
         </View>
-      </View>
 
-      {/* Messages */}
-      <FlatList
-        data={messages}
-        renderItem={renderMessage}
-        keyExtractor={(item) => item.id}
-        style={styles.messagesList}
-        contentContainerStyle={styles.messagesContent}
-        showsVerticalScrollIndicator={false}
-      />
-
-      {/* Typing Indicator */}
-      {isTyping && (
-        <View style={styles.typingContainer}>
-          <View style={styles.typingBubble}>
-            <Text style={styles.typingText}>AI is typing...</Text>
-          </View>
-        </View>
-      )}
-
-      {/* Quick Questions */}
-      {messages.length === 1 && (
-        <View style={styles.quickQuestionsContainer}>
-          <Text style={styles.quickQuestionsTitle}>Quick Questions</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {quickQuestions.map((question, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.quickQuestionButton}
-                onPress={() => setInputText(question)}
-              >
-                <Text style={styles.quickQuestionText}>{question}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      )}
-
-      {/* Input */}
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Ask me anything about nutrition..."
-          placeholderTextColor="#8E8E93"
-          value={inputText}
-          onChangeText={setInputText}
-          multiline
-          maxLength={500}
+        {/* Messages */}
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={(item) => item.id}
+          style={styles.messagesList}
+          contentContainerStyle={styles.messagesContent}
+          showsVerticalScrollIndicator={false}
+          onContentSizeChange={() => scrollToBottom()}
         />
-        <TouchableOpacity
-          style={[styles.sendButton, inputText.trim() === '' && styles.sendButtonDisabled]}
-          onPress={sendMessage}
-          disabled={inputText.trim() === ''}
-        >
-          <Ionicons name="send" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+
+        {/* Typing Indicator */}
+        {isTyping && (
+          <View style={styles.typingContainer}>
+            <View style={styles.typingBubble}>
+              <Text style={styles.typingText}>AI is typing...</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Quick Questions */}
+        {messages.length === 1 && (
+          <View style={styles.quickQuestionsContainer}>
+            <Text style={styles.quickQuestionsTitle}>Quick Questions</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {quickQuestions.map((question, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.quickQuestionButton}
+                  onPress={() => setInputText(question)}
+                >
+                  <Text style={styles.quickQuestionText}>{question}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        {/* Input */}
+        <View style={[styles.inputContainer, { marginBottom: keyboardHeight > 0 ? 0 : 0 }]}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Ask me anything about nutrition..."
+            placeholderTextColor="#8E8E93"
+            value={inputText}
+            onChangeText={setInputText}
+            multiline
+            maxLength={500}
+          />
+          <TouchableOpacity
+            style={[styles.sendButton, inputText.trim() === '' && styles.sendButtonDisabled]}
+            onPress={sendMessage}
+            disabled={inputText.trim() === ''}
+          >
+            <Ionicons name="send" size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -188,6 +265,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1A1D29',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
   },
   header: {
     backgroundColor: '#2C2F3A',
@@ -199,6 +279,13 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerText: {
+    flex: 1,
+  },
+  debugButton: {
+    padding: 8,
   },
   aiAvatar: {
     width: 40,
@@ -311,6 +398,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2C2F3A',
     borderTopWidth: 1,
     borderTopColor: '#3A3A3A',
+    minHeight: 80,
   },
   textInput: {
     flex: 1,
@@ -321,7 +409,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     maxHeight: 100,
+    minHeight: 44,
     marginRight: 12,
+    textAlignVertical: 'top',
   },
   sendButton: {
     backgroundColor: '#4CAF50',

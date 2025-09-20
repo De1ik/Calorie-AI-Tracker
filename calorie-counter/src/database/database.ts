@@ -1,5 +1,5 @@
 import * as SQLite from 'expo-sqlite';
-import { createUserTable, createPersonalFoodTable, createMealEntriesTable, createWeightEntriesTable, createStepsEntriesTable, createUserPreferencesTable, User, PersonalFood, MealEntry, WeightEntry, StepsEntry, UserPreferences } from './schema';
+import { createUserTable, createPersonalFoodTable, createMealEntriesTable, createWeightEntriesTable, createStepsEntriesTable, createUserPreferencesTable, createChatHistoryTable, User, PersonalFood, MealEntry, WeightEntry, StepsEntry, UserPreferences, ChatHistory } from './schema';
 import { generateRandomUserId, generateRandomHistoricalData, generateRandomUserProfile, generateIncompleteUserProfile } from '../utils/userUtils';
 
 const DB_NAME = 'calorie_tracker.db';
@@ -35,10 +35,12 @@ class Database {
     await this.db.execAsync(createWeightEntriesTable);
     await this.db.execAsync(createStepsEntriesTable);
     await this.db.execAsync(createUserPreferencesTable);
+    await this.db.execAsync(createChatHistoryTable);
     
     // Add migration for sportActivity column and userId columns
     await this.migrateUserTable();
     await this.migrateAllTablesForUserId();
+    await this.cleanupOrphanedData();
   }
 
   private async migrateUserTable(): Promise<void> {
@@ -184,6 +186,34 @@ class Database {
     }
   }
 
+  private async cleanupOrphanedData(): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    try {
+      console.log('Cleaning up orphaned data...');
+      
+      // Delete any records with NULL userId
+      const tables = ['weight_entries', 'steps_entries', 'meal_entries', 'personal_foods', 'user_preferences', 'chat_history'];
+      
+      for (const table of tables) {
+        try {
+          const result = await this.db.runAsync(`DELETE FROM ${table} WHERE userId IS NULL`);
+          if (result.changes > 0) {
+            console.log(`Cleaned up ${result.changes} orphaned records from ${table}`);
+          }
+        } catch (error) {
+          // Table might not exist or might not have userId column yet
+          console.log(`Skipping cleanup for ${table}:`, error instanceof Error ? error.message : String(error));
+        }
+      }
+      
+      console.log('Orphaned data cleanup completed');
+    } catch (error) {
+      console.error('Error cleaning up orphaned data:', error);
+      // Don't throw error, just log it
+    }
+  }
+
   private async migrateTableForUserId(tableName: string, userId: string): Promise<void> {
     if (!this.db) throw new Error('Database not initialized');
     
@@ -211,13 +241,20 @@ class Database {
   private async addDefaultData(): Promise<void> {
     if (!this.db) throw new Error('Database not initialized');
 
-    // Check if data already exists
-    const existingWeight = await this.db.getFirstAsync('SELECT COUNT(*) as count FROM weight_entries') as any;
-    const existingSteps = await this.db.getFirstAsync('SELECT COUNT(*) as count FROM steps_entries') as any;
-    const existingMeals = await this.db.getFirstAsync('SELECT COUNT(*) as count FROM meal_entries') as any;
+    // Get or create a user for the default data
+    let userId = await this.getCurrentUserId();
+    if (!userId) {
+      console.log('No user found, creating default user for sample data...');
+      userId = await this.createUserWithRandomData();
+    }
+
+    // Check if data already exists for this user
+    const existingWeight = await this.db.getFirstAsync('SELECT COUNT(*) as count FROM weight_entries WHERE userId = ?', [userId]) as any;
+    const existingSteps = await this.db.getFirstAsync('SELECT COUNT(*) as count FROM steps_entries WHERE userId = ?', [userId]) as any;
+    const existingMeals = await this.db.getFirstAsync('SELECT COUNT(*) as count FROM meal_entries WHERE userId = ?', [userId]) as any;
 
     if (existingWeight?.count > 0 || existingSteps?.count > 0 || existingMeals?.count > 0) {
-      console.log('Default data already exists, skipping...');
+      console.log('Default data already exists for user, skipping...');
       return;
     }
 
@@ -259,8 +296,9 @@ class Database {
     // Insert weight entries
     for (const data of defaultData) {
       await this.db.runAsync(
-        `INSERT INTO weight_entries (weight, imageUri, notes, date) VALUES (?, ?, ?, ?)`,
+        `INSERT INTO weight_entries (userId, weight, imageUri, notes, date) VALUES (?, ?, ?, ?, ?)`,
         [
+          userId,
           data.weight,
           data.hasPhoto ? `https://picsum.photos/200/200?random=${data.date}` : null,
           data.notes || null,
@@ -272,8 +310,8 @@ class Database {
     // Insert steps entries
     for (const data of defaultData) {
       await this.db.runAsync(
-        `INSERT INTO steps_entries (steps, date) VALUES (?, ?)`,
-        [data.steps, data.date]
+        `INSERT INTO steps_entries (userId, steps, date) VALUES (?, ?, ?)`,
+        [userId, data.steps, data.date]
       );
     }
 
@@ -290,8 +328,9 @@ class Database {
       for (let i = 0; i < meals.length; i++) {
         if (mealCalories[i] > 0) {
           await this.db.runAsync(
-            `INSERT INTO meal_entries (foodId, foodName, calories, protein, carbs, fat, mealType, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO meal_entries (userId, foodId, foodName, calories, protein, carbs, fat, mealType, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
+              userId,
               1, // Default food ID
               `Sample ${meals[i]}`,
               mealCalories[i],
@@ -670,6 +709,74 @@ class Database {
         return this.getStepsEntries(startDate, endDate);
       default:
         return [];
+    }
+  }
+
+  // Chat History methods
+  async saveChatHistory(userId: string, messages: any[]): Promise<number> {
+    if (!this.db) throw new Error('Database not initialized');
+
+    // Check if chat history already exists for this user
+    const existing = await this.getChatHistory(userId);
+    
+    if (existing) {
+      // Update existing chat history
+      await this.db.runAsync(
+        `UPDATE chat_history SET messages = ?, updatedAt = CURRENT_TIMESTAMP WHERE userId = ?`,
+        [JSON.stringify(messages), userId]
+      );
+      return existing.id;
+    } else {
+      // Create new chat history
+      const result = await this.db.runAsync(
+        `INSERT INTO chat_history (userId, messages) VALUES (?, ?)`,
+        [userId, JSON.stringify(messages)]
+      );
+      return result.lastInsertRowId as number;
+    }
+  }
+
+  async getChatHistory(userId: string): Promise<ChatHistory | null> {
+    if (!this.db) throw new Error('Database not initialized');
+
+    const result = await this.db.getFirstAsync<ChatHistory>(
+      'SELECT * FROM chat_history WHERE userId = ? ORDER BY updatedAt DESC LIMIT 1',
+      [userId]
+    );
+
+    return result || null;
+  }
+
+  async deleteChatHistory(userId: string): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    await this.db.runAsync('DELETE FROM chat_history WHERE userId = ?', [userId]);
+  }
+
+  // Utility method to reset database (for development/testing)
+  async resetDatabase(): Promise<void> {
+    if (!this.db) throw new Error('Database not initialized');
+    
+    try {
+      console.log('Resetting database...');
+      
+      // Drop all tables
+      const tables = ['chat_history', 'user_preferences', 'steps_entries', 'weight_entries', 'meal_entries', 'personal_foods', 'users'];
+      
+      for (const table of tables) {
+        try {
+          await this.db.execAsync(`DROP TABLE IF EXISTS ${table}`);
+        } catch (error) {
+          console.log(`Error dropping table ${table}:`, error instanceof Error ? error.message : String(error));
+        }
+      }
+      
+      // Recreate tables
+      await this.createTables();
+      
+      console.log('Database reset completed');
+    } catch (error) {
+      console.error('Error resetting database:', error);
+      throw error;
     }
   }
 

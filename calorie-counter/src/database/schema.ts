@@ -65,6 +65,14 @@ export interface UserPreferences {
   createdAt: string;
 }
 
+export interface ChatHistory {
+  id: number;
+  userId: string;
+  messages: string; // JSON string of messages
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const createUserTable = `
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -145,6 +153,17 @@ export const createUserPreferencesTable = `
     defaultTimePeriod TEXT DEFAULT 'week' CHECK (defaultTimePeriod IN ('week', 'month', '3months', 'year')),
     defaultDataType TEXT DEFAULT 'weight' CHECK (defaultDataType IN ('weight', 'calories', 'steps')),
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userId) REFERENCES users (userId)
+  );
+`;
+
+export const createChatHistoryTable = `
+  CREATE TABLE IF NOT EXISTS chat_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId TEXT NOT NULL,
+    messages TEXT NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (userId) REFERENCES users (userId)
   );
 `;

@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: height * 0.06,
+    paddingTop: height * 0.08,
     paddingBottom: height * 0.03,
   },
   backButton: {
@@ -201,8 +201,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   titleSection: {
-    marginBottom: height * 0.05,
-    paddingTop: height * 0.02,
+    marginBottom: height * 0.015,
+    paddingTop: height * 0.01,
   },
   title: {
     fontSize: width * 0.07,
@@ -218,7 +218,8 @@ const styles = StyleSheet.create({
   optionsContainer: {
     flex: 1,
     justifyContent: 'center',
-    gap: height * 0.015,
+    paddingVertical: height * 0.02,
+    marginBottom: height * 0.105,
   },
   optionWrapper: {
     marginBottom: height * 0.015,

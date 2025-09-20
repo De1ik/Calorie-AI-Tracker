@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: height * 0.06,
+    paddingTop: height * 0.08,
     paddingBottom: height * 0.03,
   },
   backButton: {
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   buttonContainer: {
-    paddingBottom: height * 0.025,
+    paddingBottom: height * 0.1,
   },
   nextButton: {
     backgroundColor: '#2C2F3A',
