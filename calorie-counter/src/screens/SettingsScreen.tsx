@@ -10,7 +10,7 @@ interface SettingsScreenProps {
 }
 
 export default function SettingsScreen({ onLogout }: SettingsScreenProps) {
-  const { colors, themeMode, setThemeMode } = useTheme();
+  const { colors, themeMode, setThemeMode, isDark } = useTheme();
   const styles = createStyles(colors);
   const [user, setUser] = useState<User | null>(null);
   const [notifications, setNotifications] = useState(true);
@@ -128,15 +128,15 @@ export default function SettingsScreen({ onLogout }: SettingsScreenProps) {
         )}
         
         {renderSettingItem(
-          'moon',
-          'Dark Mode',
-          'Use dark theme',
+          isDark ? 'sunny' : 'moon',
+          isDark ? 'Light Mode' : 'Dark Mode',
+          isDark ? 'Use light theme' : 'Use dark theme',
           undefined,
           <Switch
-            value={themeMode === 'dark'}
+            value={isDark}
             onValueChange={(value) => setThemeMode(value ? 'dark' : 'light')}
             trackColor={{ false: colors.textSecondary, true: colors.primary }}
-            thumbColor={themeMode === 'dark' ? colors.text : colors.textSecondary}
+            thumbColor={isDark ? colors.text : colors.textSecondary}
           />
         )}
         
