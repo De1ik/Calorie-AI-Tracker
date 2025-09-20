@@ -58,9 +58,6 @@ export default function GenderScreen({ onNext, onBack }: GenderScreenProps) {
         >
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity style={styles.backButton} onPress={onBack}>
-              <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
             <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
               <View style={[styles.progressFill, { width: '25%' }]} />

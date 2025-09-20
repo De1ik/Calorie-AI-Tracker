@@ -464,12 +464,14 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     alignItems: 'center',
+    justifyContent: 'center',
     flex: 1,
     marginHorizontal: 4,
   },
   summaryIcon: {
     position: 'relative',
-    marginBottom: 8,
+    marginBottom: 12,
+    marginTop: 8,
   },
   summaryNumber: {
     position: 'absolute',
