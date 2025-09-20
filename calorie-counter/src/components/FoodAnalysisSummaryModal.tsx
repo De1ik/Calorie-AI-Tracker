@@ -20,6 +20,20 @@ interface FoodAnalysisSummaryModalProps {
       freshness: number;
     };
     healthInsights?: string[];
+    nutritionalAdvice?: {
+      generalAdvice: string;
+      specificSuggestions: {
+        vegetables?: string;
+        fruits?: string;
+        proteins?: string;
+        carbs?: string;
+        healthyFats?: string;
+        hydration?: string;
+      };
+      mealEnhancement: string[];
+      portionAdvice: string;
+      timingAdvice?: string;
+    };
   };
   mealType: string;
 }
@@ -189,6 +203,80 @@ export const FoodAnalysisSummaryModal: React.FC<FoodAnalysisSummaryModalProps> =
                     <Text style={styles.insightText}>{insight}</Text>
                   </View>
                 ))}
+              </View>
+            )}
+
+            {/* Nutritional Advice */}
+            {foodData.nutritionalAdvice && (
+              <View style={styles.adviceContainer}>
+                <View style={styles.sectionHeader}>
+                  <Ionicons name="nutrition" size={20} color="#4CAF50" />
+                  <Text style={styles.sectionTitle}>Nutritional Advice</Text>
+                </View>
+                
+                <View style={styles.adviceContent}>
+                  <Text style={styles.generalAdvice}>{foodData.nutritionalAdvice.generalAdvice}</Text>
+                  
+                  {foodData.nutritionalAdvice.specificSuggestions && (
+                    <View style={styles.suggestionsContainer}>
+                      {foodData.nutritionalAdvice.specificSuggestions.vegetables && (
+                        <View style={styles.suggestionItem}>
+                          <Ionicons name="leaf" size={16} color="#4CAF50" />
+                          <Text style={styles.suggestionText}>{foodData.nutritionalAdvice.specificSuggestions.vegetables}</Text>
+                        </View>
+                      )}
+                      {foodData.nutritionalAdvice.specificSuggestions.fruits && (
+                        <View style={styles.suggestionItem}>
+                          <Ionicons name="flower" size={16} color="#FF9800" />
+                          <Text style={styles.suggestionText}>{foodData.nutritionalAdvice.specificSuggestions.fruits}</Text>
+                        </View>
+                      )}
+                      {foodData.nutritionalAdvice.specificSuggestions.proteins && (
+                        <View style={styles.suggestionItem}>
+                          <Ionicons name="fitness" size={16} color="#2196F3" />
+                          <Text style={styles.suggestionText}>{foodData.nutritionalAdvice.specificSuggestions.proteins}</Text>
+                        </View>
+                      )}
+                      {foodData.nutritionalAdvice.specificSuggestions.carbs && (
+                        <View style={styles.suggestionItem}>
+                          <Ionicons name="nutrition" size={16} color="#9C27B0" />
+                          <Text style={styles.suggestionText}>{foodData.nutritionalAdvice.specificSuggestions.carbs}</Text>
+                        </View>
+                      )}
+                      {foodData.nutritionalAdvice.specificSuggestions.healthyFats && (
+                        <View style={styles.suggestionItem}>
+                          <Ionicons name="water" size={16} color="#FF5722" />
+                          <Text style={styles.suggestionText}>{foodData.nutritionalAdvice.specificSuggestions.healthyFats}</Text>
+                        </View>
+                      )}
+                      {foodData.nutritionalAdvice.specificSuggestions.hydration && (
+                        <View style={styles.suggestionItem}>
+                          <Ionicons name="water" size={16} color="#00BCD4" />
+                          <Text style={styles.suggestionText}>{foodData.nutritionalAdvice.specificSuggestions.hydration}</Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
+                  
+                  {foodData.nutritionalAdvice.mealEnhancement.length > 0 && (
+                    <View style={styles.enhancementContainer}>
+                      <Text style={styles.enhancementTitle}>Meal Enhancements:</Text>
+                      {foodData.nutritionalAdvice.mealEnhancement.map((enhancement, index) => (
+                        <View key={index} style={styles.enhancementItem}>
+                          <Ionicons name="add-circle" size={16} color="#4CAF50" />
+                          <Text style={styles.enhancementText}>{enhancement}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                  
+                  <View style={styles.adviceFooter}>
+                    <Text style={styles.portionAdvice}>{foodData.nutritionalAdvice.portionAdvice}</Text>
+                    {foodData.nutritionalAdvice.timingAdvice && (
+                      <Text style={styles.timingAdvice}>{foodData.nutritionalAdvice.timingAdvice}</Text>
+                    )}
+                  </View>
+                </View>
               </View>
             )}
 
@@ -435,5 +523,82 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  // Nutritional Advice Styles
+  adviceContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 12,
+  },
+  adviceContent: {
+    backgroundColor: '#3A3D4A',
+    borderRadius: 12,
+    padding: 16,
+  },
+  generalAdvice: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    lineHeight: 20,
+    marginBottom: 16,
+    fontStyle: 'italic',
+  },
+  suggestionsContainer: {
+    marginBottom: 16,
+  },
+  suggestionItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    marginBottom: 8,
+    paddingVertical: 4,
+  },
+  suggestionText: {
+    flex: 1,
+    fontSize: 13,
+    color: '#E0E0E0',
+    lineHeight: 18,
+  },
+  enhancementContainer: {
+    marginBottom: 16,
+  },
+  enhancementTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#4CAF50',
+    marginBottom: 8,
+  },
+  enhancementItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    marginBottom: 6,
+    paddingVertical: 2,
+  },
+  enhancementText: {
+    flex: 1,
+    fontSize: 13,
+    color: '#E0E0E0',
+    lineHeight: 18,
+  },
+  adviceFooter: {
+    borderTopWidth: 1,
+    borderTopColor: '#4A4D5A',
+    paddingTop: 12,
+  },
+  portionAdvice: {
+    fontSize: 13,
+    color: '#FFD700',
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  timingAdvice: {
+    fontSize: 13,
+    color: '#81C784',
+    fontStyle: 'italic',
   },
 });

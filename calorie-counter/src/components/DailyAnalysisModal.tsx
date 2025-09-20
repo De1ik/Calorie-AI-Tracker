@@ -110,7 +110,7 @@ export default function DailyAnalysisModal({
               <View style={styles.timeContextContainer}>
                 <Ionicons name="time" size={20} color="#4CAF50" />
                 <Text style={styles.timeContextText}>
-                  {timeContext.timeOfDay.replace('_', ' ').toUpperCase()} • {timeContext.mealPeriod.replace('_', ' ').toUpperCase()}
+                  {timeContext.timeOfDay?.replace('_', ' ').toUpperCase() || 'UNKNOWN'} • {timeContext.mealPeriod?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
                 </Text>
               </View>
               {timeContext.hoursUntilNextMeal > 0 && (
@@ -135,19 +135,19 @@ export default function DailyAnalysisModal({
               <Text style={styles.sectionTitle}>Nutrition Summary</Text>
               <View style={styles.nutritionGrid}>
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>{nutritionalAnalysis.totalCalories}</Text>
+                  <Text style={styles.nutritionValue}>{nutritionalAnalysis.totalCalories.toFixed(1)}</Text>
                   <Text style={styles.nutritionLabel}>Calories</Text>
                 </View>
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>{nutritionalAnalysis.totalProtein}g</Text>
+                  <Text style={styles.nutritionValue}>{nutritionalAnalysis.totalProtein.toFixed(1)}g</Text>
                   <Text style={styles.nutritionLabel}>Protein</Text>
                 </View>
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>{nutritionalAnalysis.totalCarbs}g</Text>
+                  <Text style={styles.nutritionValue}>{nutritionalAnalysis.totalCarbs.toFixed(1)}g</Text>
                   <Text style={styles.nutritionLabel}>Carbs</Text>
                 </View>
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionValue}>{nutritionalAnalysis.totalFat}g</Text>
+                  <Text style={styles.nutritionValue}>{nutritionalAnalysis.totalFat.toFixed(1)}g</Text>
                   <Text style={styles.nutritionLabel}>Fat</Text>
                 </View>
               </View>
@@ -161,21 +161,21 @@ export default function DailyAnalysisModal({
                     <View style={styles.macroBalanceBar}>
                       <View style={[styles.macroBalanceFill, { width: `${nutritionalAnalysis.macroBalance.proteinPercentage}%`, backgroundColor: '#4CAF50' }]} />
                     </View>
-                    <Text style={styles.macroBalanceValue}>{nutritionalAnalysis.macroBalance.proteinPercentage}%</Text>
+                    <Text style={styles.macroBalanceValue}>{nutritionalAnalysis.macroBalance.proteinPercentage.toFixed(1)}%</Text>
                   </View>
                   <View style={styles.macroBalanceItem}>
                     <Text style={styles.macroBalanceLabel}>Carbs</Text>
                     <View style={styles.macroBalanceBar}>
                       <View style={[styles.macroBalanceFill, { width: `${nutritionalAnalysis.macroBalance.carbsPercentage}%`, backgroundColor: '#FF9800' }]} />
                     </View>
-                    <Text style={styles.macroBalanceValue}>{nutritionalAnalysis.macroBalance.carbsPercentage}%</Text>
+                    <Text style={styles.macroBalanceValue}>{nutritionalAnalysis.macroBalance.carbsPercentage.toFixed(1)}%</Text>
                   </View>
                   <View style={styles.macroBalanceItem}>
                     <Text style={styles.macroBalanceLabel}>Fat</Text>
                     <View style={styles.macroBalanceBar}>
                       <View style={[styles.macroBalanceFill, { width: `${nutritionalAnalysis.macroBalance.fatPercentage}%`, backgroundColor: '#2196F3' }]} />
                     </View>
-                    <Text style={styles.macroBalanceValue}>{nutritionalAnalysis.macroBalance.fatPercentage}%</Text>
+                    <Text style={styles.macroBalanceValue}>{nutritionalAnalysis.macroBalance.fatPercentage.toFixed(1)}%</Text>
                   </View>
                 </View>
               </View>
@@ -188,13 +188,13 @@ export default function DailyAnalysisModal({
                 <View style={styles.activityItem}>
                   <Ionicons name="walk" size={20} color="#4CAF50" />
                   <Text style={styles.activityText}>
-                    {activityAnalysis.stepsProgress.toFixed(0)}% of step goal
+                    {activityAnalysis.stepsProgress.toFixed(1)}% of step goal
                   </Text>
                 </View>
                 <View style={styles.activityItem}>
                   <Ionicons name="flame" size={20} color="#FF9800" />
                   <Text style={styles.activityText}>
-                    {activityAnalysis.calorieBurn} calories burned
+                    {activityAnalysis.calorieBurn.toFixed(1)} calories burned
                   </Text>
                 </View>
                 <View style={styles.activityItem}>
@@ -261,15 +261,15 @@ export default function DailyAnalysisModal({
               
               <View style={styles.nextMealContainer}>
                 <Text style={styles.nextMealTitle}>
-                  Next: {mealRecommendations.nextMeal.type.charAt(0).toUpperCase() + mealRecommendations.nextMeal.type.slice(1)}
+                  Next: {mealRecommendations.nextMeal?.type ? mealRecommendations.nextMeal.type.charAt(0).toUpperCase() + mealRecommendations.nextMeal.type.slice(1) : 'Unknown'}
                 </Text>
-                <Text style={styles.nextMealReasoning}>{mealRecommendations.nextMeal.reasoning}</Text>
+                <Text style={styles.nextMealReasoning}>{mealRecommendations.nextMeal?.reasoning || 'No reasoning provided'}</Text>
                 
-                {mealRecommendations.nextMeal.suggestions.map((suggestion, index) => 
+                {mealRecommendations.nextMeal?.suggestions?.map((suggestion, index) => 
                   <View key={index}>
                     {renderMealSuggestion(suggestion, index)}
                   </View>
-                )}
+                ) || []}
               </View>
 
               <View style={styles.foodAdditionsContainer}>
@@ -277,15 +277,15 @@ export default function DailyAnalysisModal({
                 <View style={styles.foodAdditionsRow}>
                   <View style={styles.foodAdditionsColumn}>
                     <Text style={styles.foodAdditionsSubtitle}>Add More:</Text>
-                    {mealRecommendations.foodAdditions.needed.map((food, index) => (
+                    {mealRecommendations.foodAdditions?.needed?.map((food, index) => (
                       <Text key={index} style={styles.foodAdditionsItem}>• {food}</Text>
-                    ))}
+                    )) || []}
                   </View>
                   <View style={styles.foodAdditionsColumn}>
                     <Text style={styles.foodAdditionsSubtitle}>Avoid:</Text>
-                    {mealRecommendations.foodAdditions.avoid.map((food, index) => (
+                    {mealRecommendations.foodAdditions?.avoid?.map((food, index) => (
                       <Text key={index} style={styles.foodAdditionsItem}>• {food}</Text>
-                    ))}
+                    )) || []}
                   </View>
                 </View>
               </View>
@@ -296,15 +296,15 @@ export default function DailyAnalysisModal({
                   <Text style={styles.hydrationTitle}>Hydration</Text>
                   <View style={[
                     styles.hydrationStatus, 
-                    { backgroundColor: mealRecommendations.hydration.status === 'good' ? '#4CAF50' : 
-                                       mealRecommendations.hydration.status === 'needs_improvement' ? '#FF9800' : '#FF3B30' }
+                    { backgroundColor: mealRecommendations.hydration?.status === 'good' ? '#4CAF50' : 
+                                       mealRecommendations.hydration?.status === 'needs_improvement' ? '#FF9800' : '#FF3B30' }
                   ]}>
                     <Text style={styles.hydrationStatusText}>
-                      {mealRecommendations.hydration.status.replace('_', ' ').toUpperCase()}
+                      {mealRecommendations.hydration?.status?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
                     </Text>
                   </View>
                 </View>
-                <Text style={styles.hydrationRecommendation}>{mealRecommendations.hydration.recommendation}</Text>
+                <Text style={styles.hydrationRecommendation}>{mealRecommendations.hydration?.recommendation || 'No hydration recommendation provided'}</Text>
               </View>
             </View>
 

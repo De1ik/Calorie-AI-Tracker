@@ -5,7 +5,8 @@ import {
   NutritionalInfo,
   FoodItem,
   FoodRating,
-  HealthInsights
+  HealthInsights,
+  NutritionalAdvice
 } from './types';
 import { getRandomMockFood, simulateAnalysisDelay } from './mockData';
 import { getConfig } from './config';
@@ -126,6 +127,7 @@ class FoodAnalysisService {
         nutritionalInfo,
         rating: mockData.rating,
         healthInsights: mockData.healthInsights,
+        nutritionalAdvice: mockData.nutritionalAdvice,
         confidence: mockData.confidence,
         analysisTime: Math.round(1000 + Math.random() * 2000) // 1-3 seconds
       }
@@ -154,16 +156,36 @@ class FoodAnalysisService {
             content: [
               {
                 type: "text",
-                text: `Analyze this food image and provide detailed nutritional information. Please respond with a JSON object containing:
+                text: `Analyze this food image and provide detailed nutritional information with personalized advice. Please respond with a JSON object containing:
 
 1. foodItem: { name: string, category: string, description: string, servingSize: string, servingWeight: number }
 2. nutritionalInfo: { calories: number, protein: number, carbs: number, fat: number, fiber?: number, sugar?: number, sodium?: number }
 3. rating: { overall: number, healthiness: number, nutrition: number, freshness: number, portionSize: number } (all 1-10 scale)
 4. healthInsights: { benefits: string[], concerns: string[], recommendations: string[] }
-5. confidence: number (0-100 percentage)
-6. analysisTime: number (milliseconds)
+5. nutritionalAdvice: {
+   generalAdvice: string,
+   specificSuggestions: {
+     vegetables?: string,
+     fruits?: string,
+     proteins?: string,
+     carbs?: string,
+     healthyFats?: string,
+     hydration?: string
+   },
+   mealEnhancement: string[],
+   portionAdvice: string,
+   timingAdvice?: string
+ }
+6. confidence: number (0-100 percentage)
+7. analysisTime: number (milliseconds)
 
 Categories should be one of: Protein, Carbs, Fats, Vegetables, Fruits, Dairy, Grains, Nuts, Seeds, Beverages, Snacks, Desserts, Other.
+
+For nutritionalAdvice, provide specific, actionable suggestions for:
+- What vegetables, fruits, proteins, carbs, or healthy fats to add
+- How to enhance the meal nutritionally
+- Portion size recommendations
+- Best timing for consuming this food
 
 Please be as accurate as possible with nutritional estimates. If you cannot clearly identify the food, provide your best estimate with appropriate confidence level.`
               },
@@ -294,6 +316,21 @@ Please be as accurate as possible with nutritional estimates. If you cannot clea
         recommendations: Array.isArray(parsedData.healthInsights?.recommendations) ? parsedData.healthInsights.recommendations : []
       };
       
+      const nutritionalAdvice: NutritionalAdvice = {
+        generalAdvice: parsedData.nutritionalAdvice?.generalAdvice || "This food provides various nutrients. Consider adding complementary foods for a balanced meal.",
+        specificSuggestions: {
+          vegetables: parsedData.nutritionalAdvice?.specificSuggestions?.vegetables,
+          fruits: parsedData.nutritionalAdvice?.specificSuggestions?.fruits,
+          proteins: parsedData.nutritionalAdvice?.specificSuggestions?.proteins,
+          carbs: parsedData.nutritionalAdvice?.specificSuggestions?.carbs,
+          healthyFats: parsedData.nutritionalAdvice?.specificSuggestions?.healthyFats,
+          hydration: parsedData.nutritionalAdvice?.specificSuggestions?.hydration
+        },
+        mealEnhancement: Array.isArray(parsedData.nutritionalAdvice?.mealEnhancement) ? parsedData.nutritionalAdvice.mealEnhancement : [],
+        portionAdvice: parsedData.nutritionalAdvice?.portionAdvice || "Consider the portion size based on your dietary goals.",
+        timingAdvice: parsedData.nutritionalAdvice?.timingAdvice
+      };
+      
       return {
         success: true,
         data: {
@@ -301,6 +338,7 @@ Please be as accurate as possible with nutritional estimates. If you cannot clea
           nutritionalInfo,
           rating,
           healthInsights,
+          nutritionalAdvice,
           confidence: Math.min(100, Math.max(0, Math.round(parsedData.confidence || 80))),
           analysisTime: Math.round(parsedData.analysisTime || 2000)
         }

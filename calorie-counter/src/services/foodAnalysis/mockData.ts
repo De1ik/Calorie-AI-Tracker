@@ -48,6 +48,25 @@ export const mockFoodDatabase: MockFoodData[] = [
       allergens: [],
       dietaryRestrictions: []
     },
+    nutritionalAdvice: {
+      generalAdvice: "Excellent protein choice! This grilled chicken breast provides high-quality protein with minimal fat. To make this meal even more nutritious, consider adding colorful vegetables and a small portion of complex carbohydrates.",
+      specificSuggestions: {
+        vegetables: "Add steamed broccoli, roasted bell peppers, or a mixed green salad to increase fiber, vitamins, and minerals",
+        fruits: "Consider a side of berries or citrus fruits for antioxidants and vitamin C",
+        proteins: "This is already an excellent protein source - no additional protein needed",
+        carbs: "Add quinoa, brown rice, or sweet potato for sustained energy and fiber",
+        healthyFats: "Drizzle with olive oil or add avocado slices for healthy monounsaturated fats",
+        hydration: "Drink water with your meal to aid digestion and stay hydrated"
+      },
+      mealEnhancement: [
+        "Serve with a side of roasted vegetables",
+        "Add a small portion of quinoa or brown rice",
+        "Include a mixed green salad with olive oil dressing",
+        "Consider adding herbs like rosemary or thyme for flavor"
+      ],
+      portionAdvice: "This portion size looks appropriate for a main protein source. Aim for 3-4 oz of protein per meal.",
+      timingAdvice: "Great choice for lunch or dinner. Protein helps with satiety and muscle maintenance."
+    },
     confidence: 95
   },
   {
@@ -95,6 +114,25 @@ export const mockFoodDatabase: MockFoodData[] = [
       ],
       allergens: [],
       dietaryRestrictions: []
+    },
+    nutritionalAdvice: {
+      generalAdvice: "Great start with fresh vegetables! This mixed green salad provides excellent vitamins, minerals, and fiber. To make it a complete meal, add a protein source and healthy fats.",
+      specificSuggestions: {
+        vegetables: "Already excellent! Consider adding more colorful vegetables like bell peppers, carrots, or tomatoes",
+        fruits: "Add berries, apple slices, or pomegranate seeds for natural sweetness and antioxidants",
+        proteins: "Add grilled chicken, salmon, chickpeas, or hard-boiled eggs for complete protein",
+        carbs: "Include quinoa, brown rice, or sweet potato for sustained energy",
+        healthyFats: "Add avocado, nuts, seeds, or olive oil for healthy fats and satiety",
+        hydration: "The high water content in vegetables helps with hydration"
+      },
+      mealEnhancement: [
+        "Top with grilled chicken or salmon",
+        "Add avocado slices or nuts for healthy fats",
+        "Include quinoa or chickpeas for protein",
+        "Drizzle with olive oil and lemon dressing"
+      ],
+      portionAdvice: "This is a good base portion. Add protein and healthy fats to make it a complete meal.",
+      timingAdvice: "Perfect for lunch or as a side dish. The fiber helps with satiety and digestion."
     },
     confidence: 88
   },
@@ -144,6 +182,25 @@ export const mockFoodDatabase: MockFoodData[] = [
       allergens: ["Gluten"],
       dietaryRestrictions: ["Gluten-free option available"]
     },
+    nutritionalAdvice: {
+      generalAdvice: "Nutritious choice with healthy fats and fiber! Avocado toast provides monounsaturated fats and potassium. To make it more balanced, add a protein source and consider the portion size.",
+      specificSuggestions: {
+        vegetables: "Add sliced tomatoes, cucumber, or microgreens for extra vitamins and crunch",
+        fruits: "Top with pomegranate seeds or serve with a side of berries for antioxidants",
+        proteins: "Add a poached or scrambled egg, smoked salmon, or hummus for complete protein",
+        carbs: "Use whole grain or sourdough bread for better fiber and nutrients",
+        healthyFats: "The avocado already provides excellent healthy fats - no additional fats needed",
+        hydration: "Pair with herbal tea or water to stay hydrated"
+      },
+      mealEnhancement: [
+        "Top with a poached egg for protein",
+        "Add sliced tomatoes and microgreens",
+        "Sprinkle with hemp seeds or chia seeds",
+        "Use whole grain bread for better nutrition"
+      ],
+      portionAdvice: "This portion looks appropriate. Avocado is calorie-dense, so one slice is usually sufficient.",
+      timingAdvice: "Great for breakfast or brunch. The healthy fats provide sustained energy throughout the morning."
+    },
     confidence: 92
   },
   {
@@ -191,6 +248,25 @@ export const mockFoodDatabase: MockFoodData[] = [
       ],
       allergens: ["Fish"],
       dietaryRestrictions: []
+    },
+    nutritionalAdvice: {
+      generalAdvice: "Excellent choice! Salmon is rich in omega-3 fatty acids, high-quality protein, and essential nutrients. This is a complete protein source that pairs well with vegetables and complex carbohydrates.",
+      specificSuggestions: {
+        vegetables: "Serve with steamed asparagus, roasted Brussels sprouts, or a mixed vegetable medley for vitamins and fiber",
+        fruits: "Add a side of citrus fruits or berries for vitamin C and antioxidants",
+        proteins: "This is already an excellent complete protein source - no additional protein needed",
+        carbs: "Pair with quinoa, brown rice, or sweet potato for balanced macronutrients",
+        healthyFats: "The salmon already provides omega-3 fatty acids - consider adding olive oil to vegetables",
+        hydration: "Drink water with your meal to support the high protein content"
+      },
+      mealEnhancement: [
+        "Serve with roasted vegetables and quinoa",
+        "Add a side salad with olive oil dressing",
+        "Include lemon wedges for flavor and vitamin C",
+        "Consider adding herbs like dill or parsley"
+      ],
+      portionAdvice: "This portion size looks appropriate for a main protein source. Aim for 4-6 oz of fish per serving.",
+      timingAdvice: "Perfect for lunch or dinner. Omega-3s support brain health and the protein helps with muscle maintenance."
     },
     confidence: 96
   },
@@ -240,6 +316,25 @@ export const mockFoodDatabase: MockFoodData[] = [
       allergens: [],
       dietaryRestrictions: ["Gluten-free"]
     },
+    nutritionalAdvice: {
+      generalAdvice: "Excellent choice! Quinoa is a complete protein and provides complex carbohydrates with fiber. This makes a great base for a nutritious bowl - just add vegetables and healthy fats.",
+      specificSuggestions: {
+        vegetables: "Add roasted vegetables like bell peppers, zucchini, or sweet potato for vitamins and fiber",
+        fruits: "Top with avocado, pomegranate seeds, or dried cranberries for flavor and nutrients",
+        proteins: "Add beans, chickpeas, grilled chicken, or tofu for additional protein",
+        carbs: "Quinoa is already a great carb source - no additional carbs needed",
+        healthyFats: "Add avocado, nuts, seeds, or olive oil for healthy fats and satiety",
+        hydration: "Quinoa absorbs water well - ensure you're drinking enough fluids"
+      },
+      mealEnhancement: [
+        "Top with roasted vegetables and avocado",
+        "Add black beans or chickpeas for protein",
+        "Include nuts or seeds for crunch and healthy fats",
+        "Drizzle with olive oil and lemon dressing"
+      ],
+      portionAdvice: "This portion size looks good for a base. Add vegetables and protein to make it a complete meal.",
+      timingAdvice: "Great for lunch or dinner. The protein and fiber provide sustained energy and satiety."
+    },
     confidence: 90
   },
   {
@@ -287,6 +382,25 @@ export const mockFoodDatabase: MockFoodData[] = [
       ],
       allergens: ["Dairy"],
       dietaryRestrictions: ["Lactose-free options available"]
+    },
+    nutritionalAdvice: {
+      generalAdvice: "Excellent choice! Greek yogurt provides high-quality protein and probiotics, while berries add antioxidants and natural sweetness. This makes a great breakfast or snack.",
+      specificSuggestions: {
+        vegetables: "Consider adding cucumber or celery sticks on the side for extra fiber and crunch",
+        fruits: "The berries are perfect! You could also add banana slices, apple chunks, or pomegranate seeds",
+        proteins: "This already has excellent protein - consider adding nuts or seeds for additional protein and healthy fats",
+        carbs: "Add granola, oats, or whole grain cereal for complex carbohydrates and fiber",
+        healthyFats: "Top with nuts, seeds, or a drizzle of nut butter for healthy fats and satiety",
+        hydration: "Yogurt has good water content, but still drink water to stay hydrated"
+      },
+      mealEnhancement: [
+        "Add granola or nuts for crunch and healthy fats",
+        "Include chia seeds or flax seeds for omega-3s",
+        "Top with honey or maple syrup for natural sweetness",
+        "Serve with a side of whole grain toast"
+      ],
+      portionAdvice: "This portion size looks appropriate for a snack or part of breakfast. Add other foods to make it a complete meal.",
+      timingAdvice: "Perfect for breakfast, post-workout snack, or afternoon snack. The protein helps with satiety and muscle recovery."
     },
     confidence: 93
   }
