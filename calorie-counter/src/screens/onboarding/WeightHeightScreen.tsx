@@ -51,6 +51,8 @@ export default function WeightHeightScreen({ onNext, onBack }: WeightHeightScree
 
   const isNextEnabled = weight && height && parseFloat(weight) > 0 && parseFloat(height) > 0;
 
+  const showBMI = !!(weight && height && parseFloat(weight) > 0 && parseFloat(height) > 0);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -151,7 +153,12 @@ export default function WeightHeightScreen({ onNext, onBack }: WeightHeightScree
         )}
 
         {/* Next Button */}
-        <View style={styles.buttonContainer}>
+        <View
+          style={[
+            isNextEnabled ? styles.buttonNextContainer : styles.buttonContainer,
+            showBMI && styles.buttonWithBmiMargin
+          ]}
+        >
           <TouchableOpacity
             style={[
               styles.nextButton,
@@ -284,7 +291,7 @@ const styles = StyleSheet.create({
     color: '#8E8E93',
   },
   bmiContainer: {
-    marginBottom: height * 0.025,
+    marginTop: height * 0.03,
   },
   bmiCard: {
     backgroundColor: '#2C2F3A',
@@ -312,6 +319,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingBottom: height * 0.1,
+  },
+  buttonNextContainer: {
+    marginTop: height * 0.02,
+  },
+  buttonWithBmiMargin: {
+    marginBottom: height * 0.03,
   },
   nextButton: {
     backgroundColor: '#2C2F3A',

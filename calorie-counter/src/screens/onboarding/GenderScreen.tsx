@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingVertical: height * 0.02,
+    marginBottom: height * 0.025,
   },
   optionWrapper: {
     marginBottom: height * 0.02,
